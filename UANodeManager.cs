@@ -887,8 +887,18 @@ namespace Opc.Ua.Edge.Translator
                             }
                             else
                             {
-                                // OPC UA type info not found, default to float
-                                BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, new ExpandedNodeId(DataTypes.Float), assetNamespaceIndex, !property.Value.ReadOnly);
+                                // OPC UA type info not found, default to property type
+                                ExpandedNodeId typeId = new ExpandedNodeId(DataTypes.Float);
+                                switch (property.Value.Type)
+                                {
+                                    case TypeEnum.String: typeId = new ExpandedNodeId(DataTypes.String); break;
+                                    case TypeEnum.Number: typeId = new ExpandedNodeId(DataTypes.Float); break;
+                                    case TypeEnum.Integer: typeId = new ExpandedNodeId(DataTypes.Int32); break;
+                                    case TypeEnum.Boolean: typeId = new ExpandedNodeId(DataTypes.Boolean); break;
+                                    case TypeEnum.Object: typeId = new ExpandedNodeId(DataTypes.ByteString); break;
+                                }
+
+                                BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, typeId, assetNamespaceIndex, !property.Value.ReadOnly);
                                 _uaVariables.Add(variableId, variable);
                                 AddPredefinedNode(SystemContext, variable);
                             }
@@ -903,24 +913,54 @@ namespace Opc.Ua.Edge.Translator
                     }
                     else
                     {
-                        // no namespace info, default to float
-                        BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, new ExpandedNodeId(DataTypes.Float), assetNamespaceIndex, !property.Value.ReadOnly);
+                        // no namespace info, default to property type
+                        ExpandedNodeId typeId = new ExpandedNodeId(DataTypes.Float);
+                        switch (property.Value.Type)
+                        {
+                            case TypeEnum.String: typeId = new ExpandedNodeId(DataTypes.String); break;
+                            case TypeEnum.Number: typeId = new ExpandedNodeId(DataTypes.Float); break;
+                            case TypeEnum.Integer: typeId = new ExpandedNodeId(DataTypes.Int32); break;
+                            case TypeEnum.Boolean: typeId = new ExpandedNodeId(DataTypes.Boolean); break;
+                            case TypeEnum.Object: typeId = new ExpandedNodeId(DataTypes.ByteString); break;
+                        }
+
+                        BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, typeId, assetNamespaceIndex, !property.Value.ReadOnly);
                         _uaVariables.Add(variableId, variable);
                         AddPredefinedNode(SystemContext, variable);
                     }
                 }
                 else
                 {
-                    // can't parse type info, default to float
-                    BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, new ExpandedNodeId(DataTypes.Float), assetNamespaceIndex, !property.Value.ReadOnly);
+                    // can't parse type info, default to property type
+                    ExpandedNodeId typeId = new ExpandedNodeId(DataTypes.Float);
+                    switch (property.Value.Type)
+                    {
+                        case TypeEnum.String: typeId = new ExpandedNodeId(DataTypes.String); break;
+                        case TypeEnum.Number: typeId = new ExpandedNodeId(DataTypes.Float); break;
+                        case TypeEnum.Integer: typeId = new ExpandedNodeId(DataTypes.Int32); break;
+                        case TypeEnum.Boolean: typeId = new ExpandedNodeId(DataTypes.Boolean); break;
+                        case TypeEnum.Object: typeId = new ExpandedNodeId(DataTypes.ByteString); break;
+                    }
+
+                    BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, typeId, assetNamespaceIndex, !property.Value.ReadOnly);
                     _uaVariables.Add(variableId, variable);
                     AddPredefinedNode(SystemContext, variable);
                 }
             }
             else
             {
-                // no type info, default to float
-                BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, new ExpandedNodeId(DataTypes.Float), assetNamespaceIndex, !property.Value.ReadOnly);
+                // no type info, default to property type
+                ExpandedNodeId typeId = new ExpandedNodeId(DataTypes.Float);
+                switch (property.Value.Type)
+                {
+                    case TypeEnum.String: typeId = new ExpandedNodeId(DataTypes.String); break;
+                    case TypeEnum.Number: typeId = new ExpandedNodeId(DataTypes.Float); break;
+                    case TypeEnum.Integer: typeId = new ExpandedNodeId(DataTypes.Int32); break;
+                    case TypeEnum.Boolean: typeId = new ExpandedNodeId(DataTypes.Boolean); break;
+                    case TypeEnum.Object: typeId = new ExpandedNodeId(DataTypes.ByteString); break;
+                }
+
+                BaseDataVariableState variable = _nodeFactory.CreateVariable(assetFolder, variableName, typeId, assetNamespaceIndex, !property.Value.ReadOnly);
                 _uaVariables.Add(variableId, variable);
                 AddPredefinedNode(SystemContext, variable);
             }

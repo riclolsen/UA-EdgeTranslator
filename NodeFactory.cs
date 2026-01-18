@@ -68,6 +68,7 @@
                 UserWriteMask = AttributeWriteMask.None,
                 AccessLevel = AccessLevels.CurrentRead,
                 DataType = ExpandedNodeId.ToNodeId(type, _manager.Server.NamespaceUris),
+                ValueRank = ValueRanks.Scalar,
                 Value = value,
                 OnReadValue = _manager.OnReadValue
             };
@@ -139,6 +140,7 @@
                 UserWriteMask = AttributeWriteMask.None,
                 AccessLevel = AccessLevels.CurrentRead,
                 DataType = ExpandedNodeId.ToNodeId(type, _manager.Server.NamespaceUris),
+                ValueRank = ValueRanks.Scalar,
                 Value = value,
                 OnReadValue = _manager.OnReadValue
             };
