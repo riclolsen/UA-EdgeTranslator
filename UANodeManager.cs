@@ -1435,7 +1435,7 @@ namespace Opc.Ua.Edge.Translator
             bool provisioningMode = (Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "pki", "issuer", "certs")).Count() == 0);
             if (provisioningMode && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("IGNORE_PROVISIONING_MODE")))
             {
-                // return new ServiceResult(StatusCodes.BadNotReadable, "Access to UA Edge Translator is limited while in provisioning mode!");
+                return new ServiceResult(StatusCodes.BadNotReadable, "Access to UA Edge Translator is limited while in provisioning mode!");
             }
 
             PropertyState property = node as PropertyState;
