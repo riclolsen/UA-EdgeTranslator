@@ -89,7 +89,7 @@ namespace Opc.Ua.Edge.Translator
                 userName);
 
             // create an exception with a vendor defined sub-code.
-            throw new ServiceResultException(new ServiceResult(
+              throw new ServiceResultException(new ServiceResult(
                 StatusCodes.BadUserAccessDenied,
                 "InvalidPassword",
                 LoadServerProperties().ProductUri,

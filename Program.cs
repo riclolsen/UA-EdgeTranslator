@@ -39,9 +39,119 @@ namespace Opc.Ua.Edge.Translator
                 ConfigSectionName = "Ua.Edge.Translator"
             };
 
-            await App.LoadApplicationConfiguration(false).ConfigureAwait(false);
+            try
+            {
+                await App.LoadApplicationConfiguration(false).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Warning("Could not load configuration file, using defaults: " + ex.Message);
 
-            await App.CheckApplicationInstanceCertificate(false, 0).ConfigureAwait(false);
+                // Create a minimal default configuration if the file failed to load
+                App.ApplicationConfiguration = new ApplicationConfiguration
+                {
+                    ApplicationName = appName,
+                    ApplicationUri = "urn:UAEdgeTranslator",
+                    ProductUri = "http://opcfoundation.com/UA/EdgeTranslator",
+                    ApplicationType = ApplicationType.ClientAndServer,
+                    SecurityConfiguration = new SecurityConfiguration
+                    {
+                        ApplicationCertificate = new CertificateIdentifier
+                        {
+                            StoreType = "Directory",
+                            StorePath = "./pki/own",
+                            SubjectName = "CN=UAEdgeTranslator, O=OPC Foundation"
+                        },
+                        AutoAcceptUntrustedCertificates = true
+                    },
+                    ServerConfiguration = new ServerConfiguration
+                    {
+                        BaseAddresses = { "opc.tcp://localhost:4840/UA/UAEdgeTranslator" },
+                        SecurityPolicies = {
+                            new ServerSecurityPolicy {
+                                SecurityMode = MessageSecurityMode.None,
+                                SecurityPolicyUri = SecurityPolicies.None
+                            }
+                        },
+                        UserTokenPolicies = {
+                            new UserTokenPolicy {
+                                TokenType = UserTokenType.UserName,
+                                SecurityPolicyUri = SecurityPolicies.Basic256Sha256
+                            },
+                            new UserTokenPolicy {
+                                TokenType = UserTokenType.Anonymous
+                            }
+                        },
+                        ServerProfileArray = {
+                            "http://opcfoundation.org/UA-Profile/Server/StandardUA2017",
+                            "http://opcfoundation.org/UA-Profile/Server/DataAccess",
+                            "http://opcfoundation.org/UA-Profile/Server/Methods"
+                        }
+                    },
+                    ClientConfiguration = new ClientConfiguration
+                    {
+                        DefaultSessionTimeout = 15000
+                    },
+                    TransportQuotas = new TransportQuotas
+                    {
+                        OperationTimeout = 1200000,
+                        MaxStringLength = 1048576,
+                        MaxByteStringLength = 1048576,
+                        MaxArrayLength = 1048576,
+                        MaxMessageSize = 4194304,
+                        MaxBufferSize = 65535,
+                        ChannelLifetime = 600000,
+                        SecurityTokenLifetime = 3600000
+                    },
+                    TraceConfiguration = new TraceConfiguration()
+                };
+            }
+
+            if (App.ApplicationConfiguration.SecurityConfiguration == null)
+            {
+                App.ApplicationConfiguration.SecurityConfiguration = new SecurityConfiguration();
+            }
+
+            if (App.ApplicationConfiguration.ClientConfiguration == null)
+            {
+                App.ApplicationConfiguration.ClientConfiguration = new ClientConfiguration();
+            }
+
+            if (App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate == null)
+            {
+                App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate = new CertificateIdentifier();
+            }
+
+            if (string.IsNullOrEmpty(App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.StorePath))
+            {
+                App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.StoreType = "Directory";
+                App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.StorePath = "./pki/own";
+                App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.SubjectName = "CN=UAEdgeTranslator, O=OPC Foundation";
+            }
+
+            if (App.ApplicationConfiguration.TraceConfiguration == null)
+            {
+                App.ApplicationConfiguration.TraceConfiguration = new TraceConfiguration();
+            }
+
+            try
+            {
+                await App.CheckApplicationInstanceCertificate(false, 0).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Warning("Could not check application instance certificate: " + ex.Message);
+
+                try
+                {
+                    // create a new certificate
+                    await App.CheckApplicationInstanceCertificate(true, 0).ConfigureAwait(false);
+                }
+                catch (Exception ex2)
+                {
+                    Log.Logger.Error("Could not create application instance certificate: " + ex2.Message);
+                }
+            }
 
             // create OPC UA cert validator
             App.ApplicationConfiguration.CertificateValidator = new CertificateValidator();

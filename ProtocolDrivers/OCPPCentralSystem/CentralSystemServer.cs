@@ -6,7 +6,9 @@ namespace OCPPCentralSystem
     using Microsoft.AspNetCore.Server.Kestrel.Https;
     using Microsoft.Extensions.DependencyInjection;
     using Opc.Ua.Edge.Translator;
+    using Serilog;
     using System;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
 
     public static class CentralSystemServer
@@ -53,7 +55,14 @@ namespace OCPPCentralSystem
                                                     OCPPClientCertificateValidatorService clientCertificateValidatorService,
                                                     HttpsConnectionAdapterOptions https)
         {
-            https.ServerCertificate = Program.App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.Certificate;
+            X509Certificate2? opcuaCert = Program.App.ApplicationConfiguration?.SecurityConfiguration?.ApplicationCertificate?.Certificate;
+            if (opcuaCert == null)
+            {
+                Log.Logger.Error("No OPC UA application certificate found. Cannot configure HTTPS settings.");
+                return;
+            }
+            
+            https.ServerCertificate = opcuaCert;
 
             if (secureComms)
             {

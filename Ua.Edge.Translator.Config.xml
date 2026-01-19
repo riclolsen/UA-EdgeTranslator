@@ -8,7 +8,7 @@
   <ApplicationUri>urn:UAEdgeTranslator</ApplicationUri>
   <ProductUri>http://opcfoundation.com/UA/EdgeTranslator</ProductUri>
   <ApplicationType>ClientAndServer_2</ApplicationType>
-
+  <!--
   <SecurityConfiguration>
     <ApplicationCertificate>
       <StoreType>Directory</StoreType>
@@ -39,8 +39,8 @@
     <RejectSHA1SignedCertificates>true</RejectSHA1SignedCertificates>
     <MinimumCertificateKeySize>1024</MinimumCertificateKeySize>
   </SecurityConfiguration>
-
-  <TransportConfigurations/>
+-->
+  <TransportConfigurations />
 
   <TransportQuotas>
     <OperationTimeout>1200000</OperationTimeout>
@@ -116,7 +116,8 @@
     <MaxSubscriptionCount>100</MaxSubscriptionCount>
     <MaxEventQueueSize>10000</MaxEventQueueSize>
 
-    <!-- see https://opcfoundation-onlineapplications.org/profilereporting/ for list of available profiles -->
+    <!-- see https://opcfoundation-onlineapplications.org/profilereporting/ for list of available
+    profiles -->
     <ServerProfileArray>
       <ua:String>http://opcfoundation.org/UA-Profile/Server/StandardUA2017</ua:String>
       <ua:String>http://opcfoundation.org/UA-Profile/Server/DataAccess</ua:String>
@@ -168,9 +169,9 @@
 
   <ClientConfiguration>
     <DefaultSessionTimeout>15000</DefaultSessionTimeout>
-    <WellKnownDiscoveryUrls/>
-    <DiscoveryServers/>
-    <EndpointCacheFilePath/>
+    <WellKnownDiscoveryUrls />
+    <DiscoveryServers />
+    <EndpointCacheFilePath />
     <MinSubscriptionLifetime>10000</MinSubscriptionLifetime>
   </ClientConfiguration>
 

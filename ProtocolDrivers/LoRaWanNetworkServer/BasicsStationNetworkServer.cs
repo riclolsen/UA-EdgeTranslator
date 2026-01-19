@@ -12,6 +12,7 @@ namespace LoRaWan.NetworkServer.BasicsStation
     using Opc.Ua;
     using Opc.Ua.Edge.Translator;
     using Opc.Ua.Security.Certificates;
+    using Serilog;
     using System;
     using System.IO;
     using System.Security.Cryptography.X509Certificates;
@@ -64,7 +65,13 @@ namespace LoRaWan.NetworkServer.BasicsStation
         internal static void ConfigureHttpsSettings(ClientCertificateValidatorService? clientCertificateValidatorService,
                                                     HttpsConnectionAdapterOptions https)
         {
-            X509Certificate2 opcuaCert = Program.App.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate.Certificate;
+            X509Certificate2? opcuaCert = Program.App.ApplicationConfiguration?.SecurityConfiguration?.ApplicationCertificate?.Certificate;
+
+            if (opcuaCert == null)
+            {
+                Log.Logger.Error("No OPC UA application certificate found. Cannot configure HTTPS settings.");
+                return;
+            }
 
             if (File.Exists(Path.Combine("pki/own/private", $"UAEdgeTranslator-with-san.pfx")))
             {
