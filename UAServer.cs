@@ -42,6 +42,12 @@ namespace Opc.Ua.Edge.Translator
 
         private void SessionManager_ImpersonateUser(Session session, ImpersonateEventArgs args)
         {
+            if (args.NewIdentity is AnonymousIdentityToken)
+            {
+               args.Identity = new UserIdentity(new AnonymousIdentityToken());
+               return;
+            }
+
             UserNameIdentityToken userNameToken = args.NewIdentity as UserNameIdentityToken;
             if (userNameToken != null)
             {
